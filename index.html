@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منوی متحرک (انیمیشن)</title>
+
+    <style>
+        body {
+            font-family: 'Tahoma', 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column; /* چیدمان اصلی صفحه به صورت عمودی */
+        }
+
+        .logo {
+            width: 150px; /* اندازه لوگو */
+            height: auto;
+            margin-bottom: 30px; /* فاصله لوگو از دکمه‌ها */
+            border-radius: 50%; /* گرد کردن گوشه‌های لوگو */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-container {
+            display: flex;
+            flex-direction: column; /* دکمه‌ها را به صورت عمودی می‌چیند */
+            gap: 15px; /* فاصله بین دکمه‌ها */
+        }
+
+        .nav-button {
+            /* استایل پایه دکمه */
+            display: inline-block;
+            padding: 12px 25px;
+            text-decoration: none;
+            color: #ffffff;
+            background-color: #0077b6; /* یه آبی شیک */
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-size: 1.1em;
+            text-align: center; /* متن دکمه‌ها وسط‌چین می‌شود */
+            
+            /* === ۱. کلید اصلی انیمیشن Hover و Click: Transition === */
+            transition: transform 0.3s ease-in-out, background-color 0.3s, box-shadow 0.3s;
+            will-change: transform, opacity; /* به مرورگر کمک میکنه سریعتر رندر کنه */
+        }
+
+        /* افکت Hover: کمی بزرگ شدن */
+        .nav-button:hover {
+            transform: scale(1.08); /* 8% بزرگتر میشه */
+            background-color: #005f90;
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        /* افکت Click (Active): فشرده شدن سریع برای بازخورد */
+        .nav-button:active {
+            transform: scale(0.95); /* کمی فشرده میشه */
+            background-color: #004e75;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.1s ease-in-out; /* سریع‌تر اجرا میشه */
+        }
+
+        /* === ۲. تعریف انیمیشن Push Effect برای انتقال صفحه === */
+
+        /* انیمیشن برای دکمه کلیک شده (حرکت به راست) */
+        @keyframes push-out-right {
+            0% { transform: translate(0) scale(1.0); opacity: 1; }
+            100% { transform: translateX(200px) scale(0.8); opacity: 0; }
+        }
+
+        /* انیمیشن برای دکمه‌های دیگر (حرکت به چپ) */
+        @keyframes push-out-left {
+            0% { transform: translate(0) scale(1.0); opacity: 1; }
+            100% { transform: translateX(-200px) scale(0.8); opacity: 0; }
+        }
+
+        /* کلاس‌هایی که توسط جاوااسکریپت برای فعال‌سازی انیمیشن استفاده می‌شوند */
+        .nav-button.animate-right {
+            /* duration: 0.6s - 600 میلی‌ثانیه برای زمان‌بندی دقیق با JS */
+            animation: push-out-right 0.6s cubic-bezier(0.5, 0, 0.5, 1) forwards;
+        }
+
+        .nav-button.animate-left {
+            animation: push-out-left 0.6s cubic-bezier(0.5, 0, 0.5, 1) forwards;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- اینجا لوگوی خود را قرار دهید -->
+    <img src="https://placehold.co/150x150/0077b6/ffffff?text=لوگو+شما" alt="لوگو شرکت" class="logo">
+
+    <div class="nav-container">
+        <!-- دکمه‌ها را با کلاس nav-button تعریف می‌کنیم -->
+        <a href="resume.html" class="nav-button">رزومه شرکت<Resume 1404.pdf>
+        <a href="catalog-control.html" class="nav-button">کاتالوگ تجهیزات کنترل هوا</a>
+        <a href="catalog-air.html" class="nav-button">تجهیزات پخش هوا</a>
+        <a href="contact.html" class="nav-button">تماس با ما</a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const buttons = document.querySelectorAll('.nav-button');
+            const transitionTime = 600; // باید با مدت زمان انیمیشن در CSS (0.6s) مطابقت داشته باشد
+
+            buttons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    // جلوی ناوبری پیش‌فرض (رفتن فوری به لینک) را می‌گیریم
+                    e.preventDefault();
+                    const targetUrl = this.href;
+                    
+                    const clickedButton = this;
+                    
+                    // اعمال انیمیشن خروج:
+                    // دکمه کلیک شده به راست می‌رود
+                    clickedButton.classList.add('animate-right');
+                    
+                    // بقیه دکمه‌ها به چپ می‌روند
+                    buttons.forEach(btn => {
+                        if (btn !== clickedButton) {
+                            btn.classList.add('animate-left');
+                        }
+                    });
+
+                    // بعد از اتمام انیمیشن، به صفحه مقصد می‌رویم
+                    setTimeout(() => {
+                        window.location.href = targetUrl;
+                    }, transitionTime);
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
